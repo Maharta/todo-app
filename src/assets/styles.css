@@ -1,0 +1,81 @@
+:root {
+  --checkbox-color: #3ba395;
+  --header-height: 87px;
+}
+
+.header {
+  height: var(--header-height);
+  background-color: darkgray;
+  padding: 1.2rem;
+  color: white;
+}
+
+/* main content */
+
+.main {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  height: calc(100% - var(--header-height));
+}
+
+.categories_container {
+  background-color: blanchedalmond;
+  padding-block: 1rem;
+}
+
+button.category_button {
+  background: none;
+  cursor: pointer;
+}
+
+.todos_container {
+  background-color: aliceblue;
+  padding: 1rem;
+}
+
+.todo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.todo .right_section,
+.todo .left_section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.todo .checkbox {
+  border: 2px solid var(--checkbox-color);
+  width: 20px;
+  height: 20px;
+  position: relative;
+}
+
+.todo .checkbox:hover {
+  background-color: var(--checkbox-color);
+}
+
+.todo .checkbox:hover::after {
+  position: absolute;
+  content: '\2713';
+  left: 3px;
+  top: -3px;
+  color: white;
+}
+
+nav ul.categories {
+  list-style-type: none;
+}
+
+/* floating action button */
+
+.fab {
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+}
