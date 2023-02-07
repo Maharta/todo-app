@@ -1,8 +1,14 @@
 import './assets/reset.css';
 import './assets/styles.css';
-import { todoEventManager } from './todoEvents';
 import Todo from './model/Todo';
 import todoView from './todos/todoView';
+import todoModel from './todos/todoModel';
+import EventManager from './utils/EventManager';
+
+const todoEventManager = EventManager.getInstance();
+
+todoModel.initializeEvents();
+todoView.initializeEvents();
 
 todoEventManager.triggerEvent('addTodo', {
   category: 'pepega',
@@ -13,8 +19,6 @@ todoEventManager.triggerEvent('addTodo', {
     priority: 'medium',
   }),
 });
-
-todoView.initializeEvents();
 
 const categoryButtons = document.querySelectorAll('.category_button');
 categoryButtons.forEach((button) => {

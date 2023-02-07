@@ -2,9 +2,8 @@ import { nanoid } from 'nanoid';
 
 export default class Todo {
   checked = false;
-  #_dueDate;
+  #id = nanoid();
   constructor({ title, description, date, priority }) {
-    this.id = nanoid();
     this.title = title;
     this.description = description || '';
     this.dueDate = date;
@@ -24,5 +23,9 @@ export default class Todo {
 
   get dueDate() {
     return this._dueDate;
+  }
+
+  get id() {
+    return this.#id;
   }
 }

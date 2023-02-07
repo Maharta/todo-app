@@ -37,6 +37,14 @@ button.category_button {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.todo:hover,
+.todo:focus {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: scale(1.02);
 }
 
 .todo .right_section,
