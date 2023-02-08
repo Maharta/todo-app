@@ -1,8 +1,10 @@
 :root {
   --checkbox-color: #3ba395;
   --header-height: 87px;
+  --low-priority-color: #008000;
+  --medium-priority-color: #feb124;
+  --high-priority-color: #fe1e1e;
 }
-
 .header {
   height: var(--header-height);
   background-color: darkgray;
@@ -86,4 +88,103 @@ nav ul.categories {
   position: absolute;
   bottom: 1rem;
   right: 1rem;
+}
+
+/* Form Modal and Overlay */
+
+.overlay {
+  background-color: rgba(0, 0, 0, 0.3);
+  visibility: hidden;
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  display: grid;
+  place-content: center;
+}
+
+.overlay.visible {
+  visibility: visible;
+}
+
+.modal {
+  background-color: white;
+  padding: 1.2rem;
+  border-radius: 1rem;
+}
+
+.modal textarea {
+  resize: none;
+}
+
+.modal form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.modal .form-control {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal .form-control label {
+  display: block;
+}
+
+.modal .form-control input[type='text'] {
+  width: 100%;
+}
+
+.modal .priorities {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.priority_control label {
+  display: block;
+  position: relative;
+  padding: 0.1rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in, color 0.2s ease-in;
+}
+
+.priority_control input:checked + label {
+  color: white;
+}
+
+.priority_control.low input:checked + label {
+  background-color: var(--low-priority-color);
+}
+.priority_control.medium input:checked + label {
+  background-color: var(--medium-priority-color);
+}
+.priority_control.high input:checked + label {
+  background-color: var(--high-priority-color);
+}
+
+.priority_control.low label {
+  border: 1px solid var(--low-priority-color);
+  color: var(--low-priority-color);
+}
+.priority_control.medium label {
+  border: 1px solid var(--medium-priority-color);
+  color: var(--medium-priority-color);
+}
+.priority_control.high label {
+  border: 1px solid var(--high-priority-color);
+  color: var(--high-priority-color);
+}
+
+.priority_control input[type='radio'] {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  z-index: -1;
 }
