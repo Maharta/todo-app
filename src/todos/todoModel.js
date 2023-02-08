@@ -3,7 +3,7 @@ import Todo from '../model/Todo';
 
 const exampleTodo = new Todo({
   title: 'AdmiralBullcock',
-  date: new Date('12 Feb 2023'),
+  dueDate: new Date('12 Feb 2023'),
   description: 'I love admiralbullcock',
   priority: 'High',
 });

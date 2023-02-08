@@ -9,21 +9,14 @@ const todoEventManager = EventManager.getInstance();
 
 todoModel.initializeEvents();
 todoView.initializeEvents();
+todoView.initializeDomEvents();
 
 todoEventManager.triggerEvent('addTodo', {
   category: 'pepega',
   todo: new Todo({
     title: 'ngawur',
-    date: new Date('10 Feb 2023'),
+    dueDate: new Date('10 Feb 2023'),
     description: 'pipiga',
     priority: 'medium',
   }),
-});
-
-const categoryButtons = document.querySelectorAll('.category_button');
-categoryButtons.forEach((button) => {
-  button.addEventListener('click', (e) => {
-    const category = e.target.dataset.category;
-    todoEventManager.triggerEvent('changeTab', { category });
-  });
 });

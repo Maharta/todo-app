@@ -1,5 +1,6 @@
 import todoModel from './todoModel';
 import EventManager from '../utils/EventManager';
+import Todo from '../model/Todo';
 
 const todoView = (() => {
   function makeTodoElement(todo) {
@@ -57,12 +58,69 @@ const todoView = (() => {
       renderTodos(e.category);
     });
     todoEventManager.subscribe('changeTab', (e) => {
+      const categoriesContainer = document.getElementById(
+        'categories_container'
+      );
+      categoriesContainer.setAttribute('data-selected', e.category);
       renderTodos(e.category);
+    });
+  }
+
+  function initializeDomEvents() {
+    const todoEventManager = EventManager.getInstance();
+    const categoryButtons = document.querySelectorAll('.category_button');
+    categoryButtons.forEach((button) => {
+      button.addEventListener('click', (e) => {
+        const category = e.target.dataset.category;
+        todoEventManager.triggerEvent('changeTab', { category });
+      });
+    });
+
+    const fab = document.getElementById('fab');
+    fab.addEventListener('click', () => {
+      const modalOverlay = document.getElementById('overlay');
+      modalOverlay.classList.add('visible');
+    });
+
+    const modalOverlay = document.getElementById('overlay');
+    modalOverlay.addEventListener('click', (e) => {
+      e.target.classList.remove('visible');
+    });
+
+    const addTodoButton = document.getElementById('addTodoButton');
+    addTodoButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      const currentCategory = document.getElementById('categories_container')
+        .dataset.selected;
+      console.log(currentCategory);
+      const title = document.querySelector('input[type="text"]#title').value;
+      const description = document.querySelector('textarea#description').value;
+      const dueDateString = document.querySelector(
+        'input[type="date"]#date'
+      ).value;
+      const dueDate = new Date(dueDateString);
+      const priority = document.querySelector(
+        'input[type="radio"][name="priority"]:checked'
+      ).value;
+      if (!priority) return;
+
+      const todo = new Todo({
+        title,
+        description,
+        dueDate,
+        priority,
+      });
+
+      todoEventManager.triggerEvent('addTodo', {
+        category: currentCategory,
+        todo,
+      });
     });
   }
 
   return {
     initializeEvents,
+    initializeDomEvents,
   };
 })();
 
