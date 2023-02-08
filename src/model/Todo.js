@@ -3,10 +3,10 @@ import { nanoid } from 'nanoid';
 export default class Todo {
   checked = false;
   #id = nanoid();
-  constructor({ title, description, date, priority }) {
+  constructor({ title, description, dueDate, priority }) {
     this.title = title;
     this.description = description || '';
-    this.dueDate = date;
+    this.dueDate = dueDate;
     this.priority = priority;
   }
 
