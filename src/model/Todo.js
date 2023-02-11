@@ -2,8 +2,10 @@ import { nanoid } from 'nanoid';
 
 export default class Todo {
   checked = false;
-  #id = nanoid();
-  constructor({ title, description, dueDate, priority }) {
+  #id;
+  #dueDate;
+  constructor({ title, description, dueDate, priority, id }) {
+    this.#id = id || nanoid();
     this.title = title;
     this.description = description || '';
     this.dueDate = dueDate;
@@ -18,11 +20,11 @@ export default class Todo {
     if (new Date() > value) {
       throw new Error("You can't set the date earlier than today.");
     }
-    this._dueDate = value;
+    this.#dueDate = value;
   }
 
   get dueDate() {
-    return this._dueDate;
+    return this.#dueDate;
   }
 
   get id() {
