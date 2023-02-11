@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Webpack App</title>
   </head>
   <body>
@@ -12,7 +14,7 @@
       <section
         class="categories_container"
         id="categories_container"
-        data-selected="default"
+        data-selected="pepega"
       >
         <nav>
           <ul class="categories">
@@ -36,7 +38,9 @@
             <p>Brush Teeth</p>
           </div>
           <div class="right_section">
-            <button>DETAILS</button>
+            <button>
+              <iconify-icon icon="eva:people-outline"></iconify-icon>
+            </button>
             <p>Dec 12th</p>
             <button>EDIT</button>
             <button>DELETE</button>
@@ -44,58 +48,7 @@
         </div>
       </section>
     </main>
-    <div class="overlay" id="overlay">
-      <div class="modal">
-        <form>
-          <div class="form-control">
-            <label for="title">Title</label>
-            <input
-              type="text"
-              name="title"
-              id="title"
-              placeholder="Work on my thesis"
-            />
-          </div>
-          <div class="form-control">
-            <label for="description">Description</label>
-            <textarea
-              name="description"
-              id="description"
-              cols="30"
-              rows="7"
-              placeholder="Work on my thesis instead of doing this project. Help mee!!"
-            ></textarea>
-          </div>
-          <div class="form-control">
-            <label for="date">Due Date</label>
-            <input type="date" name="date" id="date" />
-          </div>
-          <fieldset>
-            <legend>Priority</legend>
-            <div class="priorities">
-              <div class="priority_control low">
-                <input type="radio" name="priority" id="low" value="low" />
-                <label for="low">LOW</label>
-              </div>
-              <div class="priority_control medium">
-                <input
-                  type="radio"
-                  name="priority"
-                  id="medium"
-                  value="medium"
-                />
-                <label for="medium">MEDIUM</label>
-              </div>
-              <div class="priority_control high">
-                <input type="radio" name="priority" id="high" value="high" />
-                <label for="high">HIGH</label>
-              </div>
-            </div>
-          </fieldset>
-          <button id="addTodoButton" type="submit">Add Todo</button>
-        </form>
-      </div>
-    </div>
+    <div class="overlay hidden" id="overlay"></div>
     <button id="fab" class="fab">+</button>
   </body>
 </html>

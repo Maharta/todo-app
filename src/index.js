@@ -15,7 +15,7 @@ todoEventManager.triggerEvent('addTodo', {
   category: 'pepega',
   todo: new Todo({
     title: 'ngawur',
-    dueDate: new Date('10 Feb 2023'),
+    dueDate: new Date('13 Feb 2023'),
     description: 'pipiga',
     priority: 'medium',
   }),

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
+@import url('./reset.css');
 :root {
   --checkbox-color: #3ba395;
   --header-height: 87px;
@@ -12,17 +14,21 @@
   color: white;
 }
 
+body {
+  font-family: 'Lato', sans-serif;
+}
+
 /* main content */
 
 .main {
   display: grid;
-  grid-template-columns: 1fr 3fr;
+  grid-template-columns: minmax(max-content, 300px) 3fr;
   height: calc(100% - var(--header-height));
 }
 
 .categories_container {
   background-color: blanchedalmond;
-  padding-block: 1rem;
+  padding-block: 2rem;
 }
 
 button.category_button {
@@ -39,8 +45,19 @@ button.category_button {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
+  padding: 0.5rem;
+  margin: 0.5rem;
   transition: transform 0.3s ease;
+}
+
+.todo.low {
+  border-left: 3px solid var(--low-priority-color);
+}
+.todo.medium {
+  border-left: 3px solid var(--medium-priority-color);
+}
+.todo.high {
+  border-left: 3px solid var(--high-priority-color);
 }
 
 .todo:hover,
@@ -56,27 +73,71 @@ button.category_button {
   gap: 1rem;
 }
 
+.todo .right_section button {
+  background: none;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+}
+
+.right_section button.detail_button {
+  padding: 0.25rem 0.7rem;
+  border: 2px solid var(--checkbox-color);
+  border-radius: 4px;
+  color: var(--checkbox-color);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.right_section button.detail_button:hover,
+.right_section button.detail_button:focus {
+  background-color: var(--checkbox-color);
+  color: white;
+}
+
 .todo .checkbox {
+  background: none;
+  border: none;
   border: 2px solid var(--checkbox-color);
   width: 20px;
   height: 20px;
   position: relative;
+  cursor: pointer;
 }
 
-.todo .checkbox:hover {
+.todo .checkbox:hover,
+.todo .checkbox.checked {
   background-color: var(--checkbox-color);
 }
 
-.todo .checkbox:hover::after {
+.todo .checkbox:hover::after,
+.todo .checkbox.checked::after {
   position: absolute;
   content: '\2713';
-  left: 3px;
-  top: -3px;
+  right: -2px;
+  top: -8px;
+  font-size: 1.4rem;
   color: white;
 }
 
 nav ul.categories {
   list-style-type: none;
+  padding: 0;
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+nav ul.categories li {
+  margin-bottom: 0.5rem;
+}
+
+nav ul.categories li button {
+  background: none;
+  border: none;
+}
+nav ul.categories li button:hover,
+nav ul.categories li button:focus {
+  font-weight: bold;
 }
 
 /* floating action button */
@@ -88,14 +149,15 @@ nav ul.categories {
   position: absolute;
   bottom: 1rem;
   right: 1rem;
+  z-index: 100;
 }
 
 /* Form Modal and Overlay */
 
 .overlay {
   background-color: rgba(0, 0, 0, 0.3);
-  visibility: hidden;
   position: absolute;
+  z-index: 10;
   top: 0;
   right: 0;
   left: 0;
@@ -104,14 +166,27 @@ nav ul.categories {
   place-content: center;
 }
 
-.overlay.visible {
-  visibility: visible;
+.hidden {
+  visibility: hidden;
+  position: absolute;
 }
 
-.modal {
+.modal,
+.detail_modal {
   background-color: white;
   padding: 1.2rem;
   border-radius: 1rem;
+  z-index: 100;
+}
+
+.detail_modal {
+  max-width: 500px;
+  min-width: 300px;
+}
+
+.detail_header {
+  display: flex;
+  justify-content: space-between;
 }
 
 .modal textarea {
@@ -144,9 +219,12 @@ nav ul.categories {
   justify-content: center;
 }
 
+.priority_control {
+  position: relative;
+}
+
 .priority_control label {
   display: block;
-  position: relative;
   padding: 0.1rem 0.8rem;
   border-radius: 6px;
   cursor: pointer;

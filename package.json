@@ -32,6 +32,7 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
+    "iconify-icon": "^1.0.4",
     "nanoid": "^4.0.1"
   }
 }
