@@ -2,7 +2,7 @@
 
 A project of mine to complete a submission for TheOdinProject. This classic todo web-app is also implemented with some SOLID principles and some design patterns for practice. Here are some of the design pattern and SOLID principles used:
 
-## PubSub
+## PubSub / Observer pattern
 
 This pattern is used to loosely couple the two most used objects that i used in the implementation. This loosely coupled the TodoView and TodoModel module. This pattern also makes syncing updates between the model and the view easier.
 
@@ -17,3 +17,7 @@ In addition, the singleton pattern is used on the EventManager class (the Publis
 ## Single Responsibility principle
 
 Every object in the implementation has their own specific responsibility to make the code more maintainable. In this project, the specific examples are todoView, todoModel, and the EventManager class. The view responsibility is updating the view and registering DOM events related to the UI component, the model responsibility is for updating the localStorage and the array in memory storage, and the EventManager is a publisher class for managing the pubsub pattern.
+
+## Deployed Project
+
+<https://maharta.github.io/todo-app/>

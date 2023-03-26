@@ -138,7 +138,7 @@ const todoView = (() => {
               type="text"
               name="title"
               id="title"
-              placeholder="Work on my thesis"
+              placeholder="Mr.Fitz Homework"
             />
           </div>
           <div class="form-control">
@@ -149,7 +149,7 @@ const todoView = (() => {
               id="description"
               cols="30"
               rows="7"
-              placeholder="Work on my thesis instead of doing this project. Help mee!!"
+              placeholder="Do Mr.Fitz biology homework before March 29th."
             ></textarea>
           </div>
           <div class="form-control">
