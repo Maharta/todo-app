@@ -1,14 +1,7 @@
 import EventManager from '../utils/EventManager';
-import Todo from '../model/Todo';
 
-const exampleTodo = new Todo({
-  title: 'AdmiralBullcock',
-  dueDate: new Date('12 Feb 2023'),
-  description: 'I love admiralbullcock',
-  priority: 'high',
-});
-
-const todoStorage = new Map([['default', [exampleTodo]]]);
+const todoStorage = new Map([['default', []]]);
+console.log(todoStorage);
 
 const todoModel = ((todoStorage) => {
   function getTodosByCategory(category) {
@@ -28,7 +21,17 @@ const todoModel = ((todoStorage) => {
     console.log(todoStorage);
   }
 
-  function removeTodo({ category, todo }) {
+  function addToLocalStorage({ category, todo }) {
+    const todoObj = {
+      ...todo,
+      dueDate: todo.dueDate,
+      category,
+    };
+    console.log(todoObj);
+    localStorage.setItem(`todo-${todo.id}`, JSON.stringify(todoObj));
+  }
+
+  function deleteTodo({ category, todo }) {
     if (!todoStorage.has(category)) {
       throw new Error('Something went wrong');
     }
@@ -36,6 +39,8 @@ const todoModel = ((todoStorage) => {
       .get(category)
       .filter((existingTodo) => existingTodo.id !== todo.id);
     todoStorage.set(category, filteredTodos);
+
+    localStorage.removeItem(`todo-${todo.id}`);
   }
 
   function editTodo(todoId, category, params) {
@@ -51,12 +56,14 @@ const todoModel = ((todoStorage) => {
 
   function initializeEvents() {
     const todoEventManager = EventManager.getInstance();
-    todoEventManager.subscribe('addTodo', (todoObject) => {
-      addTodo(todoObject);
+    todoEventManager.subscribe('addTodo', ({ category, todo }) => {
+      addTodo({ category, todo });
+      addToLocalStorage({ category, todo });
     });
 
-    todoEventManager.subscribe('deleteTodo', (todoObject) => {
-      removeTodo(todoObject);
+    todoEventManager.subscribe('deleteTodo', ({ category, todo }) => {
+      deleteTodo({ category, todo });
+      console.log(todoStorage);
     });
 
     todoEventManager.subscribe('editTodo', ({ category, todo }) => {
@@ -66,11 +73,15 @@ const todoModel = ((todoStorage) => {
       todoToBeEdited.description = todo.description;
       todoToBeEdited.priority = todo.priority;
     });
+
+    todoEventManager.subscribe('loadTodo', ({ category, todo }) => {
+      addTodo({ category, todo });
+    });
   }
   return {
     addTodo,
     getTodo,
-    removeTodo,
+    removeTodo: deleteTodo,
     initializeEvents,
     getTodosByCategory,
     editTodo,

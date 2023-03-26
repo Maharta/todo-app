@@ -8,15 +8,44 @@ import EventManager from './utils/EventManager';
 const todoEventManager = EventManager.getInstance();
 
 todoModel.initializeEvents();
-todoView.initializeEvents();
+todoView.subscribeToPublisher();
 todoView.initializeDomEvents();
 
-todoEventManager.triggerEvent('addTodo', {
-  category: 'pepega',
-  todo: new Todo({
-    title: 'ngawur',
-    dueDate: new Date('13 Feb 2023'),
-    description: 'pipiga',
-    priority: 'medium',
-  }),
+// load todos from localStorage
+document.addEventListener('DOMContentLoaded', () => {
+  const keys = Object.keys(localStorage);
+  const todoKeys = keys.filter((key) => key.startsWith('todo-'));
+  const categorySet = new Set();
+
+  for (const key of todoKeys) {
+    const rawTodo = JSON.parse(localStorage.getItem(key));
+    if (rawTodo.category.toLowerCase() !== 'home') {
+      categorySet.add(rawTodo.category);
+    }
+
+    const todo = new Todo({
+      id: key.substring(5),
+      title: rawTodo.title,
+      description: rawTodo.description,
+      dueDate: new Date(rawTodo.dueDate),
+      priority: rawTodo.priority,
+      checked: rawTodo.checked,
+    });
+
+    todoEventManager.triggerEvent('loadTodo', {
+      todo,
+      category: rawTodo.category,
+    });
+  }
+
+  todoEventManager.triggerEvent('loadCategories', {
+    categories: categorySet,
+  });
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const overlay = document.getElementById('overlay');
+    overlay.classList.add('hidden');
+  }
 });

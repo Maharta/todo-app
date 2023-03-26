@@ -4,49 +4,44 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Webpack App</title>
+    <title>To! do!</title>
   </head>
   <body>
     <header class="header">
-      <h1>Todo-App</h1>
+      <img src="images/logo.png" alt="app logo that says todo" />
     </header>
     <main class="main">
       <section
         class="categories_container"
         id="categories_container"
-        data-selected="pepega"
+        data-selected="Home"
       >
         <nav>
-          <ul class="categories">
+          <ul class="categories" id="categories">
             <li>
-              <button data-category="default" class="category_button">
-                Default
-              </button>
-            </li>
-            <li>
-              <button data-category="pepega" class="category_button">
-                Pepega
-              </button>
+              <button data-category="Home" class="category_button">Home</button>
             </li>
           </ul>
+          <button id="add-category" class="add_category">+ Add Category</button>
+          <form id="add_category__form" class="form-control hidden">
+            <label for="category_input">Category Name:</label>
+            <input type="text" name="category" id="category_input" />
+            <div class="actions">
+              <button
+                class="submit_category"
+                id="submit_category"
+                type="submit"
+              >
+                \/
+              </button>
+              <button class="cancel_submit" id="cancel_submit" type="button">
+                X
+              </button>
+            </div>
+          </form>
         </nav>
       </section>
-      <section id="todos_container" class="todos_container">
-        <div class="todo">
-          <div class="left_section">
-            <div class="checkbox"></div>
-            <p>Brush Teeth</p>
-          </div>
-          <div class="right_section">
-            <button>
-              <iconify-icon icon="eva:people-outline"></iconify-icon>
-            </button>
-            <p>Dec 12th</p>
-            <button>EDIT</button>
-            <button>DELETE</button>
-          </div>
-        </div>
-      </section>
+      <section id="todos_container" class="todos_container"></section>
     </main>
     <div class="overlay hidden" id="overlay"></div>
     <button id="fab" class="fab">+</button>
