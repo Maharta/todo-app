@@ -131,12 +131,14 @@ button.category_button {
   cursor: pointer;
 }
 
-.todo .checkbox:hover,
 .todo .checkbox.checked {
   background-color: var(--checkbox-color);
 }
 
-.todo .checkbox:hover::after,
+.todo .checkbox:hover {
+  border: 3px solid var(--checkbox-color);
+}
+
 .todo .checkbox.checked::after {
   position: absolute;
   content: '\2713';
@@ -159,7 +161,15 @@ nav ul.categories li {
   font-size: 1.5rem;
 }
 
-/* left side add category button */
+nav ul.categories li.active {
+  font-style: italic;
+  font-weight: 500;
+}
+nav ul.categories li.active::before {
+  content: '//';
+}
+
+/* left side category button */
 nav button.add_category {
   margin-top: 1rem;
   margin-inline: auto;

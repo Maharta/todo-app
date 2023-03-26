@@ -1,9 +1,12 @@
-import todoModel from './todoModel';
-import EventManager from '../utils/EventManager';
-import Todo from '../model/Todo';
+import todoModel from './todoModel.js';
+import EventManager from '../utils/EventManager.js';
+import Todo from '../model/Todo.js';
 import 'iconify-icon'; /* iconify-icon web component */
 
 const iconifyIcon = 'iconify-icon';
+const DEFAULT_CATEGORY = 'Home';
+const emptyTodoHTML =
+  '<i class="empty">No todo yet in this category. Empty categories will be deleted after refresh (except home).</i>';
 
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -344,9 +347,8 @@ ${todo.description}</textarea
     const todosContainer = document.getElementById('todos_container');
     todosContainer.innerHTML = '';
     const todos = todoModel.getTodosByCategory(category);
-    if (!todos) {
-      todosContainer.innerHTML =
-        '<i class="empty">No todo yet in this category.</i>';
+    if (!todos || todos.length === 0) {
+      todosContainer.innerHTML = emptyTodoHTML;
       return;
     }
     todos.forEach((todo) => {
@@ -357,11 +359,7 @@ ${todo.description}</textarea
 
   function appendTodos(todo) {
     const todosContainer = document.getElementById('todos_container');
-    if (
-      todosContainer.innerHTML ===
-      '<i class="empty">No todo yet in this category.</i>'
-    );
-    {
+    if (todosContainer.innerHTML === emptyTodoHTML) {
       todosContainer.innerHTML = '';
     }
     const todoElement = makeTodoElement(todo);
@@ -384,11 +382,24 @@ ${todo.description}</textarea
 
   function renderCategories(categories) {
     const categoriesUl = document.getElementById('categories');
-    for (const category of categories) {
-      const categoryEl = makeCategoryElement(category);
-      console.log(categoryEl);
-      categoriesUl.appendChild(categoryEl);
+    if (!categories || categories.length === 0) {
+      return;
     }
+    const defaultHomeCategory = makeCategoryElement(DEFAULT_CATEGORY);
+    defaultHomeCategory.classList.add('active');
+    console.log(defaultHomeCategory.classList.contains('active'));
+    categoriesUl.innerHTML = '';
+    categoriesUl.appendChild(defaultHomeCategory);
+    for (const category of categories) {
+      if (category === DEFAULT_CATEGORY) continue;
+      const categoryEl = makeCategoryElement(category);
+      appendCategory(categoryEl);
+    }
+  }
+
+  function appendCategory(categoryElement) {
+    const categoriesUl = document.getElementById('categories');
+    categoriesUl.appendChild(categoryElement);
   }
 
   function subscribeToPublisher() {
@@ -409,7 +420,16 @@ ${todo.description}</textarea
     });
 
     todoEventManager.subscribe('changeTab', (e) => {
+      const oldActiveCategory = document.querySelector(
+        'nav ul#categories li.active'
+      );
+      oldActiveCategory.classList.remove('active');
       categoriesContainer.setAttribute('data-selected', e.category);
+      const newActiveButton = document.querySelector(
+        `.category_button[data-category="${e.category}"]`
+      );
+      const newActiveCategory = newActiveButton.parentNode;
+      newActiveCategory.classList.add('active');
       renderTodos(e.category);
     });
     todoEventManager.subscribe('editTodo', (e) => {
@@ -428,6 +448,10 @@ ${todo.description}</textarea
 
     todoEventManager.subscribe('deleteTodo', (e) => {
       renderTodos(e.category);
+    });
+
+    todoEventManager.subscribe('reloadCategories', (e) => {
+      renderCategories(e.categories);
     });
   }
 
@@ -467,10 +491,23 @@ ${todo.description}</textarea
     });
 
     const submitCategoryButton = document.getElementById('submit_category');
-    submitCategoryButton.addEventListener('click', () => {});
+    submitCategoryButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      const inputEl = document.getElementById('category_input');
+      if (inputEl.value === '') {
+        alert("Category text can't be empty!");
+        return;
+      }
+      todoEventManager.triggerEvent('addCategory', {
+        category: inputEl.value,
+      });
+
+      addCategoryButton.classList.remove('hidden');
+      categoryForm.classList.add('hidden');
+    });
 
     const cancelCategoryButton = document.getElementById('cancel_submit');
-    cancelCategoryButton.addEventListener('click', (e) => {
+    cancelCategoryButton.addEventListener('click', () => {
       categoryForm.classList.add('hidden');
       addCategoryButton.classList.remove('hidden');
     });

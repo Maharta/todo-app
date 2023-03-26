@@ -1,13 +1,50 @@
-import EventManager from '../utils/EventManager';
+import Todo from '../model/Todo.js';
+import EventManager from '../utils/EventManager.js';
 
-const todoStorage = new Map([['default', []]]);
-console.log(todoStorage);
+const todoStorage = new Map([
+  [
+    'Home',
+    [
+      new Todo({
+        title: 'Do My Homework',
+        description:
+          'Do my math homework by Mrs. Vida before March 28th, else she will get angry :(',
+        priority: 'high',
+        checked: false,
+        dueDate: new Date('2023-03-28T00:00:00.000Z'),
+      }),
+      new Todo({
+        title: 'Wash My Dishes',
+        description:
+          "Wash my dishes before dad come back from the supermarket, he said he's buying some milk",
+        priority: 'medium',
+        checked: true,
+        dueDate: new Date('2023-03-15T00:00:00.000Z'),
+      }),
+      new Todo({
+        title: 'Buy Some Milk',
+        description:
+          'Buy milk for a long period of time when i become a dad, just like my dad',
+        priority: 'low',
+        checked: false,
+        dueDate: new Date('2023-10-28T00:00:00.000Z'),
+      }),
+    ],
+  ],
+]);
 
 const todoModel = ((todoStorage) => {
   function getTodosByCategory(category) {
+    console.log(category);
+
     const todos = todoStorage.get(category);
     return todos;
   }
+
+  function getAllCategories() {
+    return Array.from(todoStorage.keys());
+  }
+
   function getTodo(todoId, category) {
     const todos = getTodosByCategory(category);
     return todos.find((todo) => todo.id === todoId);
@@ -18,7 +55,6 @@ const todoModel = ((todoStorage) => {
     } else {
       todoStorage.get(category).push(todo);
     }
-    console.log(todoStorage);
   }
 
   function addToLocalStorage({ category, todo }) {
@@ -54,7 +90,7 @@ const todoModel = ((todoStorage) => {
     return todoToEdit;
   }
 
-  function initializeEvents() {
+  function subscribeToPublisher() {
     const todoEventManager = EventManager.getInstance();
     todoEventManager.subscribe('addTodo', ({ category, todo }) => {
       addTodo({ category, todo });
@@ -77,12 +113,23 @@ const todoModel = ((todoStorage) => {
     todoEventManager.subscribe('loadTodo', ({ category, todo }) => {
       addTodo({ category, todo });
     });
+
+    todoEventManager.subscribe('addCategory', ({ category }) => {
+      if (todoStorage.get(category) != undefined) {
+        alert('A category with the same name already exist!');
+        return;
+      }
+      todoStorage.set(category, []);
+      todoEventManager.triggerEvent('reloadCategories', {
+        categories: getAllCategories(),
+      });
+    });
   }
   return {
     addTodo,
     getTodo,
     removeTodo: deleteTodo,
-    initializeEvents,
+    subscribeToPublisher,
     getTodosByCategory,
     editTodo,
   };

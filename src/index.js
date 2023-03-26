@@ -1,13 +1,13 @@
 import './assets/reset.css';
 import './assets/styles.css';
-import Todo from './model/Todo';
-import todoView from './todos/todoView';
-import todoModel from './todos/todoModel';
-import EventManager from './utils/EventManager';
+import Todo from './model/Todo.js';
+import todoView from './todos/todoView.js';
+import todoModel from './todos/todoModel.js';
+import EventManager from './utils/EventManager.js';
 
 const todoEventManager = EventManager.getInstance();
 
-todoModel.initializeEvents();
+todoModel.subscribeToPublisher();
 todoView.subscribeToPublisher();
 todoView.initializeDomEvents();
 
@@ -19,9 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   for (const key of todoKeys) {
     const rawTodo = JSON.parse(localStorage.getItem(key));
-    if (rawTodo.category.toLowerCase() !== 'home') {
-      categorySet.add(rawTodo.category);
-    }
+    categorySet.add(rawTodo.category);
 
     const todo = new Todo({
       id: key.substring(5),
@@ -41,6 +39,9 @@ document.addEventListener('DOMContentLoaded', () => {
   todoEventManager.triggerEvent('loadCategories', {
     categories: categorySet,
   });
+
+  // Home default category will be loaded
+  todoEventManager.triggerEvent('changeTab', { category: 'Home' });
 });
 
 document.addEventListener('keydown', (e) => {
