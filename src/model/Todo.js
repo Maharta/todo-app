@@ -1,15 +1,15 @@
 import { nanoid } from 'nanoid';
 
 export default class Todo {
-  checked = false;
   #id;
   #dueDate;
-  constructor({ title, description, dueDate, priority, id }) {
+  constructor({ title, description, dueDate, priority, id, checked = false }) {
     this.#id = id || nanoid();
     this.title = title;
     this.description = description || '';
     this.dueDate = dueDate;
     this.priority = priority;
+    this.checked = checked;
   }
 
   toggleDone() {
@@ -17,9 +17,6 @@ export default class Todo {
   }
 
   set dueDate(value) {
-    if (new Date() > value) {
-      throw new Error("You can't set the date earlier than today.");
-    }
     this.#dueDate = value;
   }
 

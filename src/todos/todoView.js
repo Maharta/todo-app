@@ -1,9 +1,12 @@
-import todoModel from './todoModel';
-import EventManager from '../utils/EventManager';
-import Todo from '../model/Todo';
+import todoModel from './todoModel.js';
+import EventManager from '../utils/EventManager.js';
+import Todo from '../model/Todo.js';
 import 'iconify-icon'; /* iconify-icon web component */
 
 const iconifyIcon = 'iconify-icon';
+const DEFAULT_CATEGORY = 'Home';
+const emptyTodoHTML =
+  '<i class="empty">No todo yet in this category. Empty categories will be deleted after refresh (except home).</i>';
 
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -36,7 +39,6 @@ const todoView = (() => {
       e.preventDefault();
       e.stopPropagation();
       todo.toggleDone();
-      console.log(todo);
       e.target.classList.toggle('checked');
     });
 
@@ -60,6 +62,7 @@ const todoView = (() => {
       day: 'numeric',
     });
     const editButton = document.createElement('button');
+    editButton.classList.add('icon_button');
     const editIcon = document.createElement(iconifyIcon);
     editIcon.setAttribute('icon', 'mdi:square-edit-outline');
     editIcon.setAttribute('height', '24px');
@@ -72,12 +75,23 @@ const todoView = (() => {
     });
 
     const deleteButton = document.createElement('button');
+    deleteButton.classList.add('icon_button');
     const trashIcon = document.createElement(iconifyIcon);
     trashIcon.setAttribute('icon', 'mdi:trash-can');
     trashIcon.setAttribute('height', '24px');
     trashIcon.setAttribute('width', '24px');
     trashIcon.style.verticalAlign = 'middle';
     deleteButton.appendChild(trashIcon);
+    deleteButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const currentCategory = document.getElementById('categories_container')
+        .dataset.selected;
+      const todoEventManager = EventManager.getInstance();
+      todoEventManager.triggerEvent('deleteTodo', {
+        category: currentCategory,
+        todo,
+      });
+    });
     right.append(detailButton, dueDateText, editButton, deleteButton);
 
     // append left and right to container div
@@ -115,41 +129,65 @@ const todoView = (() => {
 
   function makeAddTodoFormElement() {
     const html = `
-    <div class="modal" id="add_modal">
-    <form>
-      <div class="form-control">
-        <label for="title">Title</label>
-        <input required="true" type="text" name="title" id="title" placeholder="Work on my thesis">
-      </div>
-      <div class="form-control">
-        <label for="description">Description</label>
-        <textarea required="true" name="description" id="description" cols="30" rows="7" placeholder="Work on my thesis instead of doing this project. Help mee!!"></textarea>
-      </div>
-      <div class="form-control">
-        <label for="date">Due Date</label>
-        <input required="true" type="date" name="date" id="date">
-      </div>
-      <fieldset>
-        <legend>Priority</legend>
-        <div class="priorities">
-          <div class="priority_control low">
-            <input required="true" type="radio" name="priority" id="low" value="low">
-            <label for="low">LOW</label>
+      <div class="modal" id="add_modal">
+        <form>
+          <div class="form-control">
+            <label for="title">Title</label>
+            <input
+              required="true"
+              type="text"
+              name="title"
+              id="title"
+              placeholder="Work on my thesis"
+            />
           </div>
-          <div class="priority_control medium">
-            <input type="radio" name="priority" id="medium" value="medium">
-            <label for="medium">MEDIUM</label>
+          <div class="form-control">
+            <label for="description">Description</label>
+            <textarea
+              required="true"
+              name="description"
+              id="description"
+              cols="30"
+              rows="7"
+              placeholder="Work on my thesis instead of doing this project. Help mee!!"
+            ></textarea>
           </div>
-          <div class="priority_control high">
-            <input type="radio" name="priority" id="high" value="high">
-            <label for="high">HIGH</label>
+          <div class="form-control">
+            <label for="date">Due Date</label>
+            <input required="true" type="date" name="date" id="date" />
           </div>
-        </div>
-      </fieldset>
-      <button id="addTodoButton" type="submit">Add Todo</button>
-    </form>
-    </div>
-  `;
+          <fieldset>
+            <legend>Priority</legend>
+            <div class="priorities">
+              <div class="priority_control low">
+                <input
+                  required="true"
+                  type="radio"
+                  name="priority"
+                  id="low"
+                  value="low"
+                />
+                <label for="low">LOW</label>
+              </div>
+              <div class="priority_control medium">
+                <input
+                  type="radio"
+                  name="priority"
+                  id="medium"
+                  value="medium"
+                />
+                <label for="medium">MEDIUM</label>
+              </div>
+              <div class="priority_control high">
+                <input type="radio" name="priority" id="high" value="high" />
+                <label for="high">HIGH</label>
+              </div>
+            </div>
+          </fieldset>
+          <button id="addTodoButton" type="submit">Add Todo</button>
+        </form>
+      </div>
+    `;
     const doc = new DOMParser().parseFromString(html, 'text/html');
     const modal = doc.body.firstChild;
     const form = modal.querySelector('form');
@@ -188,53 +226,77 @@ const todoView = (() => {
 
   function renderTodoEditElement(todo) {
     const date = todo.dueDate.toISOString().split('T')[0].replace('/', '-');
-    console.log(date);
     const html = `
-    <div class="modal" id="add_modal">
-    <form>
-      <div class="form-control">
-        <label for="title">Title</label>
-        <input type="text" name="title" id="title" value="${
-          todo.title
-        }" placeholder="Work on my thesis">
-      </div>
-      <div class="form-control">
-        <label for="description">Description</label>
-        <textarea name="description" id="description" cols="30" rows="7" placeholder="Work on my thesis instead of doing this project. Help mee!!">${
-          todo.description
-        }</textarea>
-      </div>
-      <div class="form-control">
-        <label for="date">Due Date</label>
-        <input value="${date}" type="date" name="date" id="date">
-      </div>
-      <fieldset>
-        <legend>Priority</legend>
-        <div class="priorities">
-          <div class="priority_control low">
-            <input ${
-              todo.priority === 'low' ? 'checked' : null
-            } type="radio" name="priority" id="low" value="low">
-            <label for="low">LOW</label>
+      <div class="modal" id="add_modal">
+        <form>
+          <div class="form-control">
+            <label for="title">Title</label>
+            <input
+              required
+              type="text"
+              name="title"
+              id="title"
+              value="${todo.title}"
+              placeholder="Work on my thesis"
+            />
           </div>
-          <div class="priority_control medium">
-            <input ${
-              todo.priority === 'medium' ? 'checked' : null
-            } type="radio" name="priority" id="medium" value="medium">
-            <label for="medium">MEDIUM</label>
+          <div class="form-control">
+            <label for="description">Description</label>
+            <textarea
+              required
+              name="description"
+              id="description"
+              cols="30"
+              rows="7"
+              placeholder="Work on my thesis instead of doing this project. Help mee!!"
+            >
+${todo.description}</textarea
+            >
           </div>
-          <div class="priority_control high">
-            <input ${
-              todo.priority === 'high' ? 'checked' : null
-            }  type="radio" name="priority" id="high" value="high">
-            <label for="high">HIGH</label>
+          <div class="form-control">
+            <label for="date">Due Date</label>
+            <input required value="${date}" type="date" name="date" id="date" />
           </div>
-        </div>
-      </fieldset>
-      <button id="editTodoButton" type="submit">Edit Todo</button>
-    </form>
-    </div>
-  `;
+          <fieldset>
+            <legend>Priority</legend>
+            <div class="priorities">
+              <div class="priority_control low">
+                <input
+                  required
+                  ${todo.priority === 'low' ? 'checked' : null}
+                  type="radio"
+                  name="priority"
+                  id="low"
+                  value="low"
+                />
+                <label for="low">LOW</label>
+              </div>
+              <div class="priority_control medium">
+                <input
+                  ${todo.priority === 'medium' ? 'checked' : null}
+                  type="radio"
+                  name="priority"
+                  id="medium"
+                  value="medium"
+                />
+                <label for="medium">MEDIUM</label>
+              </div>
+              <div class="priority_control high">
+                <input
+                  ${todo.priority === 'high' ? 'checked' : null}
+                  type="radio"
+                  name="priority"
+                  id="high"
+                  value="high"
+                />
+                <label for="high">HIGH</label>
+              </div>
+            </div>
+          </fieldset>
+          <button id="editTodoButton" type="submit">Edit Todo</button>
+        </form>
+      </div>
+    `;
     const doc = new DOMParser().parseFromString(html, 'text/html');
     const modal = doc.body.firstChild;
     const overlay = document.getElementById('overlay');
@@ -285,8 +347,9 @@ const todoView = (() => {
     const todosContainer = document.getElementById('todos_container');
     todosContainer.innerHTML = '';
     const todos = todoModel.getTodosByCategory(category);
-    if (!todos) {
-      throw Error('Category not found');
+    if (!todos || todos.length === 0) {
+      todosContainer.innerHTML = emptyTodoHTML;
+      return;
     }
     todos.forEach((todo) => {
       const todoElement = makeTodoElement(todo);
@@ -296,20 +359,77 @@ const todoView = (() => {
 
   function appendTodos(todo) {
     const todosContainer = document.getElementById('todos_container');
+    if (todosContainer.innerHTML === emptyTodoHTML) {
+      todosContainer.innerHTML = '';
+    }
     const todoElement = makeTodoElement(todo);
     todosContainer.appendChild(todoElement);
   }
 
-  function initializeEvents() {
+  function makeCategoryElement(category) {
     const todoEventManager = EventManager.getInstance();
+    const li = document.createElement('li');
+    const button = document.createElement('button');
+    button.dataset.category = category;
+    button.innerText = category;
+    button.addEventListener('click', () => {
+      todoEventManager.triggerEvent('changeTab', { category });
+    });
+    button.classList.add('category_button');
+    li.appendChild(button);
+    return li;
+  }
+
+  function renderCategories(categories) {
+    const categoriesUl = document.getElementById('categories');
+    if (!categories || categories.length === 0) {
+      return;
+    }
+    const defaultHomeCategory = makeCategoryElement(DEFAULT_CATEGORY);
+    defaultHomeCategory.classList.add('active');
+    console.log(defaultHomeCategory.classList.contains('active'));
+    categoriesUl.innerHTML = '';
+    categoriesUl.appendChild(defaultHomeCategory);
+    for (const category of categories) {
+      if (category === DEFAULT_CATEGORY) continue;
+      const categoryEl = makeCategoryElement(category);
+      appendCategory(categoryEl);
+    }
+  }
+
+  function appendCategory(categoryElement) {
+    const categoriesUl = document.getElementById('categories');
+    categoriesUl.appendChild(categoryElement);
+  }
+
+  function subscribeToPublisher() {
+    const todoEventManager = EventManager.getInstance();
+    const categoriesContainer = document.getElementById('categories_container');
     todoEventManager.subscribe('addTodo', (e) => {
       appendTodos(e.todo);
     });
+
+    todoEventManager.subscribe('loadTodo', (e) => {
+      if (categoriesContainer.dataset.selected === e.category) {
+        appendTodos(e.todo);
+      }
+    });
+
+    todoEventManager.subscribe('loadCategories', ({ categories }) => {
+      renderCategories(categories);
+    });
+
     todoEventManager.subscribe('changeTab', (e) => {
-      const categoriesContainer = document.getElementById(
-        'categories_container'
+      const oldActiveCategory = document.querySelector(
+        'nav ul#categories li.active'
       );
+      oldActiveCategory.classList.remove('active');
       categoriesContainer.setAttribute('data-selected', e.category);
+      const newActiveButton = document.querySelector(
+        `.category_button[data-category="${e.category}"]`
+      );
+      const newActiveCategory = newActiveButton.parentNode;
+      newActiveCategory.classList.add('active');
       renderTodos(e.category);
     });
     todoEventManager.subscribe('editTodo', (e) => {
@@ -324,6 +444,14 @@ const todoView = (() => {
         day: 'numeric',
       });
       editedElement.className = `todo ${e.todo.priority}`;
+    });
+
+    todoEventManager.subscribe('deleteTodo', (e) => {
+      renderTodos(e.category);
+    });
+
+    todoEventManager.subscribe('reloadCategories', (e) => {
+      renderCategories(e.categories);
     });
   }
 
@@ -353,10 +481,40 @@ const todoView = (() => {
         modalOverlay.classList.add('hidden');
       }
     });
+
+    const categoryForm = document.getElementById('add_category__form');
+    const addCategoryButton = document.getElementById('add-category');
+    addCategoryButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.target.classList.add('hidden');
+      categoryForm.classList.remove('hidden');
+    });
+
+    const submitCategoryButton = document.getElementById('submit_category');
+    submitCategoryButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      const inputEl = document.getElementById('category_input');
+      if (inputEl.value === '') {
+        alert("Category text can't be empty!");
+        return;
+      }
+      todoEventManager.triggerEvent('addCategory', {
+        category: inputEl.value,
+      });
+
+      addCategoryButton.classList.remove('hidden');
+      categoryForm.classList.add('hidden');
+    });
+
+    const cancelCategoryButton = document.getElementById('cancel_submit');
+    cancelCategoryButton.addEventListener('click', () => {
+      categoryForm.classList.add('hidden');
+      addCategoryButton.classList.remove('hidden');
+    });
   }
 
   return {
-    initializeEvents,
+    subscribeToPublisher,
     initializeDomEvents,
   };
 })();

@@ -2,33 +2,45 @@
 @import url('./reset.css');
 :root {
   --checkbox-color: #3ba395;
-  --header-height: 87px;
+  --header-height: 100px;
   --low-priority-color: #008000;
   --medium-priority-color: #feb124;
   --high-priority-color: #fe1e1e;
 }
+
+/* utility class */
+.hidden {
+  visibility: hidden;
+  position: absolute;
+}
+
+/* utility stop */
+
 .header {
   height: var(--header-height);
-  background-color: darkgray;
+  background-color: #c38d9e;
   padding: 1.2rem;
   color: white;
+  border-bottom: 1px solid black;
 }
 
 body {
   font-family: 'Lato', sans-serif;
+  background-color: #f7f7f7;
 }
 
 /* main content */
 
 .main {
   display: grid;
-  grid-template-columns: minmax(max-content, 300px) 3fr;
+  grid-template-columns: minmax(max-content, 250px) 3fr;
   height: calc(100% - var(--header-height));
 }
 
 .categories_container {
-  background-color: blanchedalmond;
+  background-color: #eeeeee;
   padding-block: 2rem;
+  border-right: 1px solid black;
 }
 
 button.category_button {
@@ -39,6 +51,14 @@ button.category_button {
 .todos_container {
   background-color: aliceblue;
   padding: 1rem;
+}
+
+/* empty todo text */
+.empty {
+  margin-top: 1rem;
+  margin-left: 1rem;
+  font-size: 1.5rem;
+  display: block;
 }
 
 .todo {
@@ -80,6 +100,12 @@ button.category_button {
   cursor: pointer;
 }
 
+.todo .right_section .icon_button:hover,
+.todo .right_section .icon_button:focus {
+  transform: scale(1.2);
+  transition: transform 0.1s ease;
+}
+
 .right_section button.detail_button {
   padding: 0.25rem 0.7rem;
   border: 2px solid var(--checkbox-color);
@@ -105,12 +131,14 @@ button.category_button {
   cursor: pointer;
 }
 
-.todo .checkbox:hover,
 .todo .checkbox.checked {
   background-color: var(--checkbox-color);
 }
 
-.todo .checkbox:hover::after,
+.todo .checkbox:hover {
+  border: 3px solid var(--checkbox-color);
+}
+
 .todo .checkbox.checked::after {
   position: absolute;
   content: '\2713';
@@ -129,6 +157,67 @@ nav ul.categories {
 
 nav ul.categories li {
   margin-bottom: 0.5rem;
+  font-weight: 300;
+  font-size: 1.5rem;
+}
+
+nav ul.categories li.active {
+  font-style: italic;
+  font-weight: 500;
+}
+nav ul.categories li.active::before {
+  content: '//';
+}
+
+/* left side category button */
+nav button.add_category {
+  margin-top: 1rem;
+  margin-inline: auto;
+  display: block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: none;
+  background-color: #c38d9e;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+/* form-control for category input */
+nav .form-control {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  margin-inline: auto;
+  font-weight: 300;
+  margin-top: 1rem;
+}
+
+nav .form-control .actions {
+  display: flex;
+  margin-top: 8px;
+}
+
+nav .form-control .actions button {
+  flex: 1;
+  background: none;
+  border: none;
+  color: white;
+  font-weight: bold;
+}
+
+nav .form-control .actions .submit_category {
+  background-color: hsl(172, 47%, 44%);
+}
+
+nav .form-control .actions .cancel_submit {
+  background-color: hsl(0, 100%, 35%);
+}
+
+nav button.add_category:hover,
+nav button.add_category:focus {
+  background-color: hsl(341, 31%, 40%);
 }
 
 nav ul.categories li button {
@@ -137,19 +226,29 @@ nav ul.categories li button {
 }
 nav ul.categories li button:hover,
 nav ul.categories li button:focus {
-  font-weight: bold;
+  font-weight: 500;
 }
 
 /* floating action button */
 
 .fab {
   border-radius: 50%;
-  width: 80px;
-  height: 80px;
+  width: 4rem;
+  height: 4rem;
   position: absolute;
+  border: none;
+  cursor: pointer;
   bottom: 1rem;
-  right: 1rem;
+  background-color: hsl(341, 31%, 66%);
+  font-size: 2.5rem;
+  color: white;
+  right: 2rem;
   z-index: 100;
+}
+
+.fab:hover,
+.fab:focus {
+  background-color: hsl(341, 31%, 40%);
 }
 
 /* Form Modal and Overlay */
@@ -166,11 +265,6 @@ nav ul.categories li button:focus {
   place-content: center;
 }
 
-.hidden {
-  visibility: hidden;
-  position: absolute;
-}
-
 .modal,
 .detail_modal {
   background-color: white;
@@ -182,6 +276,7 @@ nav ul.categories li button:focus {
 .detail_modal {
   max-width: 500px;
   min-width: 300px;
+  padding: 2rem;
 }
 
 .detail_header {
@@ -231,20 +326,6 @@ nav ul.categories li button:focus {
   transition: background-color 0.2s ease-in, color 0.2s ease-in;
 }
 
-.priority_control input:checked + label {
-  color: white;
-}
-
-.priority_control.low input:checked + label {
-  background-color: var(--low-priority-color);
-}
-.priority_control.medium input:checked + label {
-  background-color: var(--medium-priority-color);
-}
-.priority_control.high input:checked + label {
-  background-color: var(--high-priority-color);
-}
-
 .priority_control.low label {
   border: 1px solid var(--low-priority-color);
   color: var(--low-priority-color);
@@ -256,6 +337,24 @@ nav ul.categories li button:focus {
 .priority_control.high label {
   border: 1px solid var(--high-priority-color);
   color: var(--high-priority-color);
+}
+
+.priority_control input:is(:checked, :hover, :focus) + label,
+.priority_control label:is(:hover, :focus) {
+  color: white;
+}
+
+.priority_control.low input:is(:checked, :hover, :focus) + label,
+.priority_control.low label:is(:hover, :focus) {
+  background-color: var(--low-priority-color);
+}
+.priority_control.medium input:is(:checked, :hover, :focus) + label,
+.priority_control.medium label:is(:hover, :focus) {
+  background-color: var(--medium-priority-color);
+}
+.priority_control.high input:is(:checked, :hover, :focus) + label,
+.priority_control.high label:is(:hover, :focus) {
+  background-color: var(--high-priority-color);
 }
 
 .priority_control input[type='radio'] {
