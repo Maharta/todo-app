@@ -2,7 +2,7 @@
 
 A project of mine to complete a submission for TheOdinProject. This classic todo web-app is also implemented with some SOLID principles and some design patterns for practice. Here are some of the design pattern and SOLID principles used:
 
-## PubSub
+## PubSub / Observer pattern
 
 This pattern is used to loosely couple the two most used objects that i used in the implementation. This loosely coupled the TodoView and TodoModel module. This pattern also makes syncing updates between the model and the view easier.
 
